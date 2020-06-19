@@ -39,7 +39,7 @@ func New() *gorm.DB {
 	return db
 }
 
-// AutoMigrate migrates into the database passed as argument the DemocrArt models
+//TODO: check errors
 func AutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&model.ArtMovement{},
@@ -49,18 +49,18 @@ func AutoMigrate(db *gorm.DB) {
 		&model.Media{},
 		&model.Genre{},
 	)
-	db.AutoMigrate(&model.ArtistSchool{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.ArtistSchool{}).AddForeignKey("painting_school_id", "painting_schools(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.ArtistNationality{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.ArtistNationality{}).AddForeignKey("nationality_id", "nationalities(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.ArtistMovement{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.ArtistMovement{}).AddForeignKey("art_movement_id", "art_movements(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.ArtistsSchool{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.ArtistsSchool{}).AddForeignKey("painting_school_id", "painting_schools(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.ArtistsNationality{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.ArtistsNationality{}).AddForeignKey("nationality_id", "nationalities(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.ArtistsMovement{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.ArtistsMovement{}).AddForeignKey("art_movement_id", "art_movements(id)", "RESTRICT", "RESTRICT")
 	db.AutoMigrate(&model.Painting{}).AddForeignKey("artist_id", "artists(id)", "RESTRICT", "RESTRICT")
 	db.AutoMigrate(&model.Image{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.PaintingStyle{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.PaintingStyle{}).AddForeignKey("art_movement_id", "art_movements(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.PaintingGenre{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.PaintingGenre{}).AddForeignKey("genre_id", "genres(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.PaintingMedia{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.PaintingMedia{}).AddForeignKey("media_id", "medias(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.PaintingsStyle{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.PaintingsStyle{}).AddForeignKey("art_movement_id", "art_movements(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.PaintingsGenre{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.PaintingsGenre{}).AddForeignKey("genre_id", "genres(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.PaintingsMedias{}).AddForeignKey("painting_id", "paintings(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.PaintingsMedias{}).AddForeignKey("media_id", "media(id)", "RESTRICT", "RESTRICT")
 }
