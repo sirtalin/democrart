@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/sirtalin/democrart/internal/repository/db"
 	"github.com/sirtalin/democrart/pkg/utils"
-	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/viper"
 )
@@ -13,5 +13,7 @@ func init() {
 }
 
 func main() {
-	logrus.Info("Hello World")
+	dbConn := db.New()
+	db.AutoMigrate(dbConn)
+	defer dbConn.Close()
 }
