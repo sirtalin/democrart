@@ -2,13 +2,17 @@
 
 <center>
 
-API &amp; scraper developed in Go to obtain art paintings easily.
+API developed in Go to obtain art paintings easily.
 
 This project wants to offer a new method to obtain information for data science projects which work with art paintings.
 
 </center>
 
 ## Required Environment Variables
+
+### General Envs
+
+- **TIME_LAYOUT_US**="January 2, 2006"
 
 ### Envs that affect to the logs
 
