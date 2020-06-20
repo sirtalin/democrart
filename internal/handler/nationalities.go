@@ -17,9 +17,9 @@ func (h *Handler) GetNationalities(c echo.Context) error {
 	return c.JSON(http.StatusOK, nationalities)
 }
 
-func (h *Handler) GetArtistsByNationalities(c echo.Context) error {
+func (h *Handler) GetArtistsByNationality(c echo.Context) error {
 	var nationality string = c.Param("nationality")
-	artists, err := h.ArtistStore.GetArtistByNationalities(nationality)
+	artists, err := h.ArtistStore.GetArtistsByNationality(nationality)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}

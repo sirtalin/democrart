@@ -211,7 +211,7 @@ func (as *ArtistStore) GetNationalities() (map[string]int, error) {
 	return nationalitiesCount, nil
 }
 
-func (as *ArtistStore) GetArtistByNationalities(name string) (map[string][]string, error) {
+func (as *ArtistStore) GetArtistsByNationality(name string) (map[string][]string, error) {
 	var artistsByNationalities map[string][]string = make(map[string][]string)
 	var nationality model.Nationality
 	var artists []model.Artist
@@ -225,4 +225,30 @@ func (as *ArtistStore) GetArtistByNationalities(name string) (map[string][]strin
 	}
 
 	return artistsByNationalities, nil
+}
+
+func (as *ArtistStore) GetArtMovements() (map[string]int, error) {
+	var artMovementsCount map[string]int = make(map[string]int)
+	var artMovements []result
+	as.db.Table("art_movements").Select("name, count(*) as count").Group("art_movements.id").Joins("JOIN artists_movements am ON am.art_movement_id=art_movements.id").Order("count DESC").Scan(&artMovements)
+	for _, artMovement := range artMovements {
+		artMovementsCount[artMovement.Name] = artMovement.Count
+	}
+	return artMovementsCount, nil
+}
+
+func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string, error) {
+	var artistsByArtMovement map[string][]string = make(map[string][]string)
+	var artMovement model.ArtMovement
+	var artists []model.Artist
+
+	as.db.Preload("Artists").First(&artMovement, "name = ?", name)
+
+	as.db.Model(&artMovement).Association("Artists").Find(&artists)
+
+	for _, artist := range artists {
+		artistsByArtMovement[name] = append(artistsByArtMovement[name], artist.Name)
+	}
+
+	return artistsByArtMovement, nil
 }

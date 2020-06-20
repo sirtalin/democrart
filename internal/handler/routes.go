@@ -8,5 +8,9 @@ func (h *Handler) Register(group *echo.Group) {
 
 	nationalities := group.Group("/nationalities")
 	nationalities.GET("/list", h.GetNationalities)
-	nationalities.GET("/list/:nationality", h.GetArtistsByNationalities)
+	nationalities.GET("/list/:nationality", h.GetArtistsByNationality)
+
+	artMovements := group.Group("/artmovements")
+	artMovements.GET("/list", h.GetArtMovements)
+	artMovements.GET("/list/:artmovement", h.GetArtistsByArtMovement)
 }
