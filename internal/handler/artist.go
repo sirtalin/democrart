@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/sirtalin/democrart/internal/handler/response"
 	"github.com/sirtalin/democrart/internal/model"
-	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) GetArtists(c echo.Context) error {
@@ -43,7 +42,7 @@ func (h *Handler) GetArtists(c echo.Context) error {
 		artMovement.Name = artMovementName
 		artistFilter.ArtMovements = append(artistFilter.ArtMovements, artMovement)
 	}
-	logrus.Debug(artistFilter)
+
 	artists, err := h.ArtistStore.GetArtists(artistFilter)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)

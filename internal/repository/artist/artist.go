@@ -8,4 +8,6 @@ type Store interface {
 	GetArtistImages(string) (*model.Artist, error)
 	ListArtists() ([]*model.Artist, error)
 	GetArtists(*model.Artist) ([]*model.Artist, error)
+	GetNationalities() (map[string]int, error)
+	GetArtistByNationalities(string) (map[string][]string, error)
 }

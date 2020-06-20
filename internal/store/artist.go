@@ -195,3 +195,34 @@ func (as *ArtistStore) GetArtists(artist *model.Artist) ([]*model.Artist, error)
 
 	return artists, err
 }
+
+type result struct {
+	Name  string
+	Count int
+}
+
+func (as *ArtistStore) GetNationalities() (map[string]int, error) {
+	var nationalitiesCount map[string]int = make(map[string]int)
+	var nationalities []result
+	as.db.Table("nationalities").Select("demonym as name, count(*) as count").Group("nationalities.id").Joins("JOIN artists_nationalities an ON an.nationality_id=nationalities.id").Order("count DESC").Scan(&nationalities)
+	for _, nationality := range nationalities {
+		nationalitiesCount[nationality.Name] = nationality.Count
+	}
+	return nationalitiesCount, nil
+}
+
+func (as *ArtistStore) GetArtistByNationalities(name string) (map[string][]string, error) {
+	var artistsByNationalities map[string][]string = make(map[string][]string)
+	var nationality model.Nationality
+	var artists []model.Artist
+
+	as.db.Preload("Artists").First(&nationality, "demonym = ?", name)
+
+	as.db.Model(&nationality).Association("Artists").Find(&artists)
+
+	for _, artist := range artists {
+		artistsByNationalities[name] = append(artistsByNationalities[name], artist.Name)
+	}
+
+	return artistsByNationalities, nil
+}
