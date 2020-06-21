@@ -1,30 +1,35 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 )
 
 func (h *Handler) GetNationalities(c echo.Context) error {
 	nationalities, err := h.ArtistStore.GetNationalities()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-	if len(nationalities) == 0 {
-		return c.JSON(http.StatusNoContent, nationalities)
+		if err == gorm.ErrRecordNotFound {
+			return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("No nationalities found"))
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Internal Server Error")
 	}
 	return c.JSON(http.StatusOK, nationalities)
 }
 
 func (h *Handler) GetArtistsByNationality(c echo.Context) error {
-	var nationality string = c.Param("nationality")
+	var nationality string = c.QueryParam("nationality")
+	if nationality == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Filter required")
+	}
 	artists, err := h.ArtistStore.GetArtistsByNationality(nationality)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-	if len(artists) == 0 {
-		return c.JSON(http.StatusNoContent, artists)
+		if err == gorm.ErrRecordNotFound {
+			return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("No records found for %s nationality", nationality))
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Internal Server Error")
 	}
 	return c.JSON(http.StatusOK, artists)
 }

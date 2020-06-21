@@ -190,10 +190,13 @@ func (as *ArtistStore) GetArtists(artist *model.Artist) ([]*model.Artist, error)
 	err := tx.Preload("Nationalities").Preload("PaintingSchools").Preload("ArtMovements").Preload("Paintings").Find(&artists).Error
 
 	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
 		return nil, err
 	}
 
-	return artists, err
+	return artists, nil
 }
 
 type result struct {
@@ -204,11 +207,11 @@ type result struct {
 func (as *ArtistStore) GetNationalities() (map[string]int, error) {
 	var nationalitiesCount map[string]int = make(map[string]int)
 	var nationalities []result
-	as.db.Table("nationalities").Select("demonym as name, count(*) as count").Group("nationalities.id").Joins("JOIN artists_nationalities an ON an.nationality_id=nationalities.id").Order("count DESC").Scan(&nationalities)
+	err := as.db.Table("nationalities").Select("demonym as name, count(*) as count").Group("nationalities.id").Joins("JOIN artists_nationalities an ON an.nationality_id=nationalities.id").Order("count DESC").Scan(&nationalities).Error
 	for _, nationality := range nationalities {
 		nationalitiesCount[nationality.Name] = nationality.Count
 	}
-	return nationalitiesCount, nil
+	return nationalitiesCount, err
 }
 
 func (as *ArtistStore) GetArtistsByNationality(name string) (map[string][]string, error) {
@@ -216,9 +219,23 @@ func (as *ArtistStore) GetArtistsByNationality(name string) (map[string][]string
 	var nationality model.Nationality
 	var artists []model.Artist
 
-	as.db.Preload("Artists").First(&nationality, "demonym = ?", name)
+	err := as.db.Preload("Artists").First(&nationality, "demonym = ?", name).Error
 
-	as.db.Model(&nationality).Association("Artists").Find(&artists)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	err = as.db.Model(&nationality).Association("Artists").Find(&artists).Error
+
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
 
 	for _, artist := range artists {
 		artistsByNationalities[name] = append(artistsByNationalities[name], artist.Name)
@@ -230,11 +247,11 @@ func (as *ArtistStore) GetArtistsByNationality(name string) (map[string][]string
 func (as *ArtistStore) GetArtMovements() (map[string]int, error) {
 	var artMovementsCount map[string]int = make(map[string]int)
 	var artMovements []result
-	as.db.Table("art_movements").Select("name, count(*) as count").Group("art_movements.id").Joins("JOIN artists_movements am ON am.art_movement_id=art_movements.id").Order("count DESC").Scan(&artMovements)
+	err := as.db.Table("art_movements").Select("name, count(*) as count").Group("art_movements.id").Joins("JOIN artists_movements am ON am.art_movement_id=art_movements.id").Order("count DESC").Scan(&artMovements).Error
 	for _, artMovement := range artMovements {
 		artMovementsCount[artMovement.Name] = artMovement.Count
 	}
-	return artMovementsCount, nil
+	return artMovementsCount, err
 }
 
 func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string, error) {
@@ -242,9 +259,23 @@ func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string
 	var artMovement model.ArtMovement
 	var artists []model.Artist
 
-	as.db.Preload("Artists").First(&artMovement, "name = ?", name)
+	err := as.db.Preload("Artists").First(&artMovement, "name = ?", name).Error
 
-	as.db.Model(&artMovement).Association("Artists").Find(&artists)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	err = as.db.Model(&artMovement).Association("Artists").Find(&artists).Error
+
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
 
 	for _, artist := range artists {
 		artistsByArtMovement[name] = append(artistsByArtMovement[name], artist.Name)
@@ -256,11 +287,11 @@ func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string
 func (as *ArtistStore) GetPaintingSchools() (map[string]int, error) {
 	var paintingSchoolCount map[string]int = make(map[string]int)
 	var paintingSchools []result
-	as.db.Table("painting_schools").Select("name, count(*) as count").Group("painting_schools.id").Joins("JOIN artists_schools ON artists_schools.painting_school_id=painting_schools.id").Order("count DESC").Scan(&paintingSchools)
+	err := as.db.Table("painting_schools").Select("name, count(*) as count").Group("painting_schools.id").Joins("JOIN artists_schools ON artists_schools.painting_school_id=painting_schools.id").Order("count DESC").Scan(&paintingSchools).Error
 	for _, paintingSchool := range paintingSchools {
 		paintingSchoolCount[paintingSchool.Name] = paintingSchool.Count
 	}
-	return paintingSchoolCount, nil
+	return paintingSchoolCount, err
 }
 
 func (as *ArtistStore) GetArtistsByPaintingSchool(name string) (map[string][]string, error) {
@@ -268,9 +299,23 @@ func (as *ArtistStore) GetArtistsByPaintingSchool(name string) (map[string][]str
 	var paintingSchool model.PaintingSchool
 	var artists []model.Artist
 
-	as.db.Preload("Artists").First(&paintingSchool, "name = ?", name)
+	err := as.db.Preload("Artists").First(&paintingSchool, "name = ?", name).Error
 
-	as.db.Model(&paintingSchool).Association("Artists").Find(&artists)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	err = as.db.Model(&paintingSchool).Association("Artists").Find(&artists).Error
+
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
 
 	for _, artist := range artists {
 		artistsByPaintingSchool[name] = append(artistsByPaintingSchool[name], artist.Name)
