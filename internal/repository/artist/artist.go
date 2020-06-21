@@ -10,6 +10,8 @@ type Store interface {
 	GetArtists(*model.Artist) ([]*model.Artist, error)
 	GetNationalities() (map[string]int, error)
 	GetArtMovements() (map[string]int, error)
+	GetPaintingSchools() (map[string]int, error)
 	GetArtistsByNationality(string) (map[string][]string, error)
 	GetArtistsByArtMovement(string) (map[string][]string, error)
+	GetArtistsByPaintingSchool(string) (map[string][]string, error)
 }

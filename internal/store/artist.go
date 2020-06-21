@@ -252,3 +252,29 @@ func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string
 
 	return artistsByArtMovement, nil
 }
+
+func (as *ArtistStore) GetPaintingSchools() (map[string]int, error) {
+	var paintingSchoolCount map[string]int = make(map[string]int)
+	var paintingSchools []result
+	as.db.Table("painting_schools").Select("name, count(*) as count").Group("painting_schools.id").Joins("JOIN artists_schools ON artists_schools.painting_school_id=painting_schools.id").Order("count DESC").Scan(&paintingSchools)
+	for _, paintingSchool := range paintingSchools {
+		paintingSchoolCount[paintingSchool.Name] = paintingSchool.Count
+	}
+	return paintingSchoolCount, nil
+}
+
+func (as *ArtistStore) GetArtistsByPaintingSchool(name string) (map[string][]string, error) {
+	var artistsByPaintingSchool map[string][]string = make(map[string][]string)
+	var paintingSchool model.PaintingSchool
+	var artists []model.Artist
+
+	as.db.Preload("Artists").First(&paintingSchool, "name = ?", name)
+
+	as.db.Model(&paintingSchool).Association("Artists").Find(&artists)
+
+	for _, artist := range artists {
+		artistsByPaintingSchool[name] = append(artistsByPaintingSchool[name], artist.Name)
+	}
+
+	return artistsByPaintingSchool, nil
+}
