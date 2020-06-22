@@ -9,4 +9,5 @@ require (
 	github.com/onrik/logrus v0.6.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
+	github.com/verybluebot/tarinator-go v0.0.0-20190613183509-5ab4e1193986
 )
