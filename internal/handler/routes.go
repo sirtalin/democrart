@@ -3,19 +3,22 @@ package handler
 import "github.com/labstack/echo"
 
 func (h *Handler) Register(group *echo.Group) {
-	artist := group.Group("/artists")
-	artist.GET("/list", h.GetArtists)
-	artist.GET("/images", h.GetArtistsImages)
+	artists := group.Group("/artists")
+	artists.GET("/list", h.GetArtists)
+	artists.GET("/images", h.GetArtistsImages)
 
-	nationalities := artist.Group("/nationalities")
+	nationalities := artists.Group("/nationalities")
 	nationalities.GET("", h.GetNationalities)
 	nationalities.GET("/list", h.GetArtistsByNationality)
 
-	artMovements := artist.Group("/movements")
+	artMovements := artists.Group("/movements")
 	artMovements.GET("", h.GetArtMovements)
 	artMovements.GET("/list", h.GetArtistsByArtMovement)
 
-	paintingSchools := artist.Group("/schools")
+	paintingSchools := artists.Group("/schools")
 	paintingSchools.GET("", h.GetPaintingSchools)
 	paintingSchools.GET("/list", h.GetArtistsByPaintingSchool)
+
+	paintings := group.Group("/paintings")
+	paintings.GET("/list", h.GetPaintings)
 }
