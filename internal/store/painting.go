@@ -212,3 +212,125 @@ func (ps *PaintingStore) GetPaintings(painting *model.Painting) ([]*model.Artist
 
 	return artists, nil
 }
+
+func (ps *PaintingStore) GetPaintingsImages(painting *model.Painting) ([]*model.Artist, error) {
+	var artists []*model.Artist
+	var ids []uint
+	var bids []uint
+	var firstFilter bool = true
+
+	var tx *gorm.DB = ps.db
+
+	var genre model.Genre
+	var paintingsByGenre []*model.Painting
+
+	var style model.ArtMovement
+	var paintingsByStyle []*model.Painting
+
+	var media model.Media
+	var paintingsByMedia []*model.Painting
+
+	var paintingsByName []*model.Painting
+
+	if len(painting.Genres) == 1 {
+		err := ps.db.Where(&model.Genre{Name: painting.Genres[0].Name}).First(&genre).Error
+
+		if err != nil {
+			return nil, err
+		}
+
+		err = ps.db.Model(&genre).Related(&paintingsByGenre, "Paintings").Error
+
+		if !firstFilter {
+			bids = ids
+			ids = nil
+		}
+
+		for _, p := range paintingsByGenre {
+			if firstFilter || utils.UintInSlice(p.ID, bids) {
+				ids = append(ids, p.ID)
+			}
+		}
+
+		firstFilter = false
+	}
+
+	if len(painting.Styles) == 1 {
+		err := ps.db.Where(&model.ArtMovement{Name: painting.Styles[0].Name}).First(&style).Error
+
+		if err != nil {
+			return nil, err
+		}
+
+		err = ps.db.Model(&style).Related(&paintingsByStyle, "Paintings").Error
+
+		if !firstFilter {
+			bids = ids
+			ids = nil
+		}
+
+		for _, p := range paintingsByStyle {
+			if firstFilter || utils.UintInSlice(p.ID, bids) {
+				ids = append(ids, p.ID)
+			}
+		}
+
+		firstFilter = false
+	}
+
+	if len(painting.Medias) == 1 {
+		err := ps.db.Where(&model.Media{Name: painting.Medias[0].Name}).First(&media).Error
+
+		if err != nil {
+			return nil, err
+		}
+
+		err = ps.db.Model(&media).Related(&paintingsByMedia, "Paintings").Error
+
+		if !firstFilter {
+			bids = ids
+			ids = nil
+		}
+
+		for _, p := range paintingsByMedia {
+			if firstFilter || utils.UintInSlice(p.ID, bids) {
+				ids = append(ids, p.ID)
+			}
+		}
+
+		firstFilter = false
+	}
+
+	if len(painting.Name) >= 3 {
+		err := ps.db.Where("name LIKE ?", fmt.Sprintf("%s%s%s", "%", painting.Name, "%")).Find(&paintingsByName).Error
+
+		if err != nil {
+			return nil, err
+		}
+
+		if !firstFilter {
+			bids = ids
+			ids = nil
+		}
+
+		for _, p := range paintingsByName {
+			if firstFilter || utils.UintInSlice(p.ID, bids) {
+				ids = append(ids, p.ID)
+			}
+		}
+
+		firstFilter = false
+	}
+
+	err := tx.Preload("Paintings", "id in (?)", ids).Preload("Paintings.Genres").Preload("Paintings.Styles").Preload("Paintings.Medias").Preload("Paintings.Images").Find(&artists).Error
+
+	if err != nil {
+		logrus.Error(err)
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	return artists, nil
+}

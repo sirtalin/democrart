@@ -7,4 +7,5 @@ type Store interface {
 	CreateImage(*model.Painting, *model.Image) error
 	GetPainting(string, string) (*model.Painting, error)
 	GetPaintings(*model.Painting) ([]*model.Artist, error)
+	GetPaintingsImages(*model.Painting) ([]*model.Artist, error)
 }

@@ -21,4 +21,5 @@ func (h *Handler) Register(group *echo.Group) {
 
 	paintings := group.Group("/paintings")
 	paintings.GET("/list", h.GetPaintings)
+	paintings.GET("/images", h.GetPaintingsImages)
 }
