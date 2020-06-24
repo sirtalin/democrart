@@ -11,10 +11,10 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
+	"github.com/mholt/archiver/v3"
 	"github.com/sirtalin/democrart/internal/model"
 	"github.com/sirtalin/democrart/pkg/utils"
 	"github.com/sirupsen/logrus"
-	"github.com/verybluebot/tarinator-go"
 )
 
 func (h *Handler) GetArtistsImages(c echo.Context) error {
@@ -94,8 +94,11 @@ func (h *Handler) GetArtistsImages(c echo.Context) error {
 		}
 		locations = append(locations, tmpDir)
 	}
-	var file string = path.Join(fmt.Sprintf("%s%d.tar", "democrart", rand.Intn(10000)))
-	err = tarinator.Tarinate(locations, file)
+
+	var file string = fmt.Sprintf("%s%s%s%s%s%d.zip", "democrart", nationalityDemonym, name, artMovementName, paintingSchoolName, rand.Intn(10000))
+	var filePath string = path.Join(os.TempDir(), file)
+
+	err = archiver.Archive(locations, filePath)
 	if err != nil {
 		logrus.Error(err)
 		return echo.NewHTTPError(http.StatusInternalServerError, "Internal Server Error")
@@ -103,7 +106,7 @@ func (h *Handler) GetArtistsImages(c echo.Context) error {
 
 	defer os.Remove(file)
 
-	return c.File(file)
+	return c.Attachment(filePath, file)
 }
 
 func (h *Handler) GetPaintingsImages(c echo.Context) error {
@@ -184,8 +187,11 @@ func (h *Handler) GetPaintingsImages(c echo.Context) error {
 			locations = append(locations, tmpDir)
 		}
 	}
-	var file string = path.Join(fmt.Sprintf("%s%d.tar", "democrart", rand.Intn(10000)))
-	err = tarinator.Tarinate(locations, file)
+
+	var file string = fmt.Sprintf("%s%s%s%s%s%d.zip", "democrart", genreName, name, styleName, mediaName, rand.Intn(10000))
+	var filePath string = path.Join(os.TempDir(), file)
+
+	err = archiver.Archive(locations, filePath)
 	if err != nil {
 		logrus.Error(err)
 		return echo.NewHTTPError(http.StatusInternalServerError, "Internal Server Error")
@@ -193,5 +199,5 @@ func (h *Handler) GetPaintingsImages(c echo.Context) error {
 
 	defer os.Remove(file)
 
-	return c.File(file)
+	return c.Attachment(filePath, file)
 }
