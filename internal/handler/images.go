@@ -2,18 +2,15 @@ package handler
 
 import (
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/mholt/archiver/v3"
 	"github.com/sirtalin/democrart/internal/model"
-	"github.com/sirtalin/democrart/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -68,31 +65,11 @@ func (h *Handler) GetArtistsImages(c echo.Context) error {
 	}
 
 	for _, artist := range artists {
-		tmpDir, err := ioutil.TempDir(os.TempDir(), strings.ReplaceAll(artist.Name, " ", "_"))
-		if err != nil {
-			logrus.Error("Cannot create temporary directory", err)
-		}
-
-		defer os.RemoveAll(tmpDir)
-
 		for _, painting := range artist.Paintings {
-
-			if err != nil {
-				logrus.Error("Cannot create temporary file", err)
-			}
-
 			for _, image := range painting.Images {
-				imPath := path.Join(tmpDir, fmt.Sprintf("%s_%d.jpg", strings.ReplaceAll(painting.Name, " ", "_"), rand.Intn(10000)))
-				err := utils.CopyFile(image.Location, imPath)
-				if err == nil {
-					logrus.Debugf("Copied %s in %s", image.Location, imPath)
-
-				} else {
-					logrus.Error(err)
-				}
+				locations = append(locations, image.Location)
 			}
 		}
-		locations = append(locations, tmpDir)
 	}
 
 	var file string = fmt.Sprintf("%s%s%s%s%s%d.zip", "democrart", nationalityDemonym, name, artMovementName, paintingSchoolName, rand.Intn(10000))
@@ -160,31 +137,11 @@ func (h *Handler) GetPaintingsImages(c echo.Context) error {
 
 	for _, artist := range paintings {
 		if len(artist.Paintings) != 0 {
-			tmpDir, err := ioutil.TempDir(os.TempDir(), strings.ReplaceAll(artist.Name, " ", "_"))
-			if err != nil {
-				logrus.Error("Cannot create temporary directory", err)
-			}
-
-			defer os.RemoveAll(tmpDir)
-
 			for _, painting := range artist.Paintings {
-
-				if err != nil {
-					logrus.Error("Cannot create temporary file", err)
-				}
-
 				for _, image := range painting.Images {
-					imPath := path.Join(tmpDir, fmt.Sprintf("%s_%d.jpg", strings.ReplaceAll(painting.Name, " ", "_"), rand.Intn(10000)))
-					err := utils.CopyFile(image.Location, imPath)
-					if err == nil {
-						logrus.Debugf("Copied %s in %s", image.Location, imPath)
-
-					} else {
-						logrus.Error(err)
-					}
+					locations = append(locations, image.Location)
 				}
 			}
-			locations = append(locations, tmpDir)
 		}
 	}
 
