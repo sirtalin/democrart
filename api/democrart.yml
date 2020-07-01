@@ -1,0 +1,436 @@
+openapi: "3.0.0"
+info:
+  description: An Open Source API to obtain images of paintings
+  title: DemocrArt
+  version: 0.4.2
+servers:
+  - url: http://149.202.47.135:3000
+paths:
+  /api/artists/list:
+    get:
+      tags:
+        - artists
+      description: Get a list of the artists filtered by parameters
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name or fragment of the name of the artist. Length of the string should be bigger than 3
+        - in: query 
+          name: nationality
+          schema:
+            type: string
+          description: Nationality demonym
+        - in: query
+          name: paintingschool
+          schema:
+            type: string
+          description: Name of the painting school
+        - in: query
+          name: artmovement
+          schema:
+            type: string
+          description: Name of the art movement
+      responses:
+        200:
+          description: List the artists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/artist"
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/images:
+    get:
+      tags:
+        - artists
+      description: Get a ZIP file with the images of the paintings of the artists
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name or fragment of the name of the artist. Length of the string should be bigger than 3
+        - in: query 
+          name: nationality
+          schema:
+            type: string
+          description: Nationality demonym
+        - in: query
+          name: paintingschool
+          schema:
+            type: string
+          description: Name of the painting school
+        - in: query
+          name: artmovement
+          schema:
+            type: string
+          description: Name of the art movement
+      responses:
+        200:
+          description: ZIP file with the images of the paintings of the artists referred with the query parameters grouped by artists
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/nationalities:
+    get:
+      tags:
+        - nationalities
+      description: Get the list of nationalities available with the number of artists with that nationality
+      responses:
+        200:
+          description: List of the nationalities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/enum"
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/nationalities/list:
+    get:
+      tags:
+        - nationalities
+      description: Get the list of artist available for the nationality passed as query argument
+      parameters:
+        - in: query
+          name: nationality
+          schema:
+            type: string
+          description: Demonym of the nationality
+      responses:
+        200:
+          description: List of the nationalities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/movements:
+    get:
+      tags:
+        - art movements
+      description: Get the list of art movements available with the number of artists with that movement
+      responses:
+        200:
+          description: List of the movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/enum"
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/movements/list:
+    get:
+      tags:
+        - art movements
+      description: Get the list of artist available for the art movement passed as query argument
+      parameters:
+        - in: query
+          name: movement
+          schema:
+            type: string
+          description: Name of the art movement
+      responses:
+        200:
+          description: List of the movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/schools:
+    get:
+      tags:
+        - painting schools
+      description: Get the list of painting schools available with the number of artists with that school
+      responses:
+        200:
+          description: List of the movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/enum"
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/artists/schools/list:
+    get:
+      tags:
+        - painting schools
+      description: Get the list of artist available for the painting schools passed as query argument
+      parameters:
+        - in: query
+          name: movement
+          schema:
+            type: string
+          description: Name of the art movement
+      responses:
+        200:
+          description: List of the movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/paintings/list:
+    get:
+      tags:
+        - paintings
+      description: Get a list of the paintings filtered by parameters
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name or fragment of the name of the painting. Length of the string should be bigger than 3
+        - in: query 
+          name: genre
+          schema:
+            type: string
+          description: Name of the genre of the painting
+        - in: query
+          name: style
+          schema:
+            type: string
+          description: Name of the style of the painting
+        - in: query
+          name: media
+          schema:
+            type: string
+          description: Name of the media used to create the artwork.
+      responses:
+        200:
+          description: List of the paintings grouped by artist
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/paintings"
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/paintings/images:
+    get:
+      tags:
+        - paintings
+      description: Get a ZIP file with the images of the paintings referred with the query filters
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name or fragment of the name of the painting. Length of the string should be bigger than 3
+        - in: query 
+          name: genre
+          schema:
+            type: string
+          description: Name of the genre of the painting
+        - in: query
+          name: style
+          schema:
+            type: string
+          description: Name of the style of the painting
+        - in: query
+          name: media
+          schema:
+            type: string
+          description: Name of the media used to create the artwork.
+      responses:
+        200:
+          description: ZIP file with the images of the paintings referred with the query parameters
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: No records found for that criteria
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    artist:
+      type: object
+      properties:
+        name:
+          type: string
+        original_name:
+          type: string
+        nationalities:
+          type: array
+          items:
+            type: string
+        painting_schools:
+          type: array
+          items:
+            type: string
+        art_movements:
+          type: array
+          items:
+            type: string
+        paintings:
+          type: array
+          items:
+            type: string
+        birth_date:
+          type: string
+          format: date
+        death_date:
+          type: string
+          format: date
+    enum:
+        type: object
+        properties:
+          name:
+            type: string
+          count:
+            type: integer
+    paintings:
+      type: object
+      properties:
+        artist:
+          type: string
+        artworks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              original_name:
+                type: string
+              width:
+                type: integer
+              height:
+                type: integer
+              genres:
+                type: array
+                items:
+                  type: string
+              styles:
+                type: array
+                items:
+                  type: string
+              medias:
+                type: array
+                items:
+                  type: string

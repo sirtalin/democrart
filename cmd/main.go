@@ -26,6 +26,7 @@ func main() {
 
 	router := route.New()
 	api := router.Group("/api")
+	router.Static("/doc", "./doc/index.html")
 
 	democrartHandler.Register(api)
 	router.Logger.Fatal(router.Start(":3000"))
