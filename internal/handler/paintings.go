@@ -58,5 +58,5 @@ func (h *Handler) GetPaintings(c echo.Context) error {
 	if len(paintings) == 0 {
 		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("No records found for that criteria"))
 	}
-	return c.JSON(http.StatusOK, response.NewPaintingMapResponse(paintings))
+	return c.JSON(http.StatusOK, response.NewArtistPaintingsResponse(paintings))
 }

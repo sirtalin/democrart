@@ -29,6 +29,11 @@ type PaintingResponse struct {
 	Medias       []string `json:"medias"`
 }
 
+type ArtistPaintingResponse struct {
+	Artist    string              `json:"artist"`
+	Paintings []*PaintingResponse `json:"artworks"`
+}
+
 func NewArtistListResponse(artists []*model.Artist) []*ArtistResponse {
 	var artistResponse *ArtistResponse
 	var artistResponseList []*ArtistResponse
@@ -68,6 +73,18 @@ func NewArtistResponse(artist *model.Artist) *ArtistResponse {
 	artistResponse.DeathDate = formatDate(artist.DeathDate)
 
 	return artistResponse
+}
+
+func NewArtistPaintingsResponse(artists []*model.Artist) []*ArtistPaintingResponse {
+	var artistsPaintingsResponse []*ArtistPaintingResponse
+	var paintingMapResponse map[string][]*PaintingResponse = NewPaintingMapResponse(artists)
+	for key, value := range paintingMapResponse {
+		var artistPaintingResponse *ArtistPaintingResponse = new(ArtistPaintingResponse)
+		artistPaintingResponse.Artist = key
+		artistPaintingResponse.Paintings = value
+		artistsPaintingsResponse = append(artistsPaintingsResponse, artistPaintingResponse)
+	}
+	return artistsPaintingsResponse
 }
 
 func NewPaintingMapResponse(artists []*model.Artist) map[string][]*PaintingResponse {

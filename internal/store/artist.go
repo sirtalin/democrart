@@ -278,19 +278,11 @@ func (as *ArtistStore) GetArtists(artist *model.Artist) ([]*model.Artist, error)
 	return artists, nil
 }
 
-type result struct {
-	Name  string
-	Count int
-}
-
-func (as *ArtistStore) GetNationalities() (map[string]int, error) {
-	var nationalitiesCount map[string]int = make(map[string]int)
-	var nationalities []result
+func (as *ArtistStore) GetNationalities() ([]model.Result, error) {
+	var nationalities []model.Result
 	err := as.db.Table("nationalities").Select("demonym as name, count(*) as count").Group("nationalities.id").Joins("JOIN artists_nationalities an ON an.nationality_id=nationalities.id").Order("count DESC").Scan(&nationalities).Error
-	for _, nationality := range nationalities {
-		nationalitiesCount[nationality.Name] = nationality.Count
-	}
-	return nationalitiesCount, err
+
+	return nationalities, err
 }
 
 func (as *ArtistStore) GetArtistsByNationality(name string) (map[string][]string, error) {
@@ -323,14 +315,11 @@ func (as *ArtistStore) GetArtistsByNationality(name string) (map[string][]string
 	return artistsByNationalities, nil
 }
 
-func (as *ArtistStore) GetArtMovements() (map[string]int, error) {
-	var artMovementsCount map[string]int = make(map[string]int)
-	var artMovements []result
+func (as *ArtistStore) GetArtMovements() ([]model.Result, error) {
+	var artMovements []model.Result
 	err := as.db.Table("art_movements").Select("name, count(*) as count").Group("art_movements.id").Joins("JOIN artists_movements am ON am.art_movement_id=art_movements.id").Order("count DESC").Scan(&artMovements).Error
-	for _, artMovement := range artMovements {
-		artMovementsCount[artMovement.Name] = artMovement.Count
-	}
-	return artMovementsCount, err
+
+	return artMovements, err
 }
 
 func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string, error) {
@@ -363,14 +352,11 @@ func (as *ArtistStore) GetArtistsByArtMovement(name string) (map[string][]string
 	return artistsByArtMovement, nil
 }
 
-func (as *ArtistStore) GetPaintingSchools() (map[string]int, error) {
-	var paintingSchoolCount map[string]int = make(map[string]int)
-	var paintingSchools []result
+func (as *ArtistStore) GetPaintingSchools() ([]model.Result, error) {
+	var paintingSchools []model.Result
 	err := as.db.Table("painting_schools").Select("name, count(*) as count").Group("painting_schools.id").Joins("JOIN artists_schools ON artists_schools.painting_school_id=painting_schools.id").Order("count DESC").Scan(&paintingSchools).Error
-	for _, paintingSchool := range paintingSchools {
-		paintingSchoolCount[paintingSchool.Name] = paintingSchool.Count
-	}
-	return paintingSchoolCount, err
+
+	return paintingSchools, err
 }
 
 func (as *ArtistStore) GetArtistsByPaintingSchool(name string) (map[string][]string, error) {
