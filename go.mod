@@ -3,11 +3,18 @@ module github.com/sirtalin/democrart
 go 1.14
 
 require (
-	github.com/jinzhu/gorm v1.9.14
+	github.com/antchfx/htmlquery v1.2.3 // indirect
+	github.com/antchfx/xmlquery v1.3.3 // indirect
+	github.com/gertd/go-pluralize v0.1.7
+	github.com/gocolly/colly v1.2.0
+	github.com/jinzhu/gorm v1.9.16
+	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0
-	github.com/mholt/archiver/v3 v3.3.0
-	github.com/onrik/logrus v0.6.0
-	github.com/sirupsen/logrus v1.6.0
-	github.com/spf13/viper v1.7.0
+	github.com/mholt/archiver/v3 v3.3.2
+	github.com/onrik/logrus v0.8.0
+	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
+	github.com/sirupsen/logrus v1.7.0
+	github.com/spf13/viper v1.7.1
+	github.com/temoto/robotstxt v1.1.1 // indirect
 )

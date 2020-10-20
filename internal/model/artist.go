@@ -1,6 +1,7 @@
 package model
 
 import (
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -42,4 +43,50 @@ type ArtistsNationality struct {
 	Artist        *Artist      `gorm:"foreignkey:id"`
 	NationalityID uint         `sql:"type:int REFERENCES nationality(id)" json:"nationality_id"`
 	Nationality   *Nationality `gorm:"foreignkey:id"`
+}
+
+type ArtistCSV struct {
+	ID              int             `csv:"id"`
+	Name            string          `csv:"name"`
+	OriginalName    string          `csv:"original_name"`
+	Nationalities   Nationalities   `csv:"nationalities"`
+	PaintingSchools PaintingSchools `csv:"painting_schools"`
+	ArtMovements    ArtMovements    `csv:"art_movements"`
+	BirthDate       Date            `csv:"birth_date"`
+	DeathDate       Date            `csv:"death_date"`
+}
+
+type Nationalities struct {
+	Nationalities []string
+}
+
+func (nationalities *Nationalities) UnmarshalCSV(csv string) (err error) {
+	for _, nationality := range strings.Split(csv, ";") {
+		nationalities.Nationalities = append(nationalities.Nationalities, nationality)
+	}
+	return nil
+}
+
+type PaintingSchools struct {
+	PaintingSchools []string
+}
+
+func (paintingSchools *PaintingSchools) UnmarshalCSV(csv string) (err error) {
+	for _, paintingSchool := range strings.Split(csv, ";") {
+		paintingSchools.PaintingSchools = append(paintingSchools.PaintingSchools, paintingSchool)
+	}
+	return nil
+
+}
+
+type ArtMovements struct {
+	ArtMovements []string
+}
+
+func (paintingSchools *ArtMovements) UnmarshalCSV(csv string) (err error) {
+	for _, artMovement := range strings.Split(csv, ";") {
+		paintingSchools.ArtMovements = append(paintingSchools.ArtMovements, artMovement)
+	}
+	return nil
+
 }

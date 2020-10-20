@@ -6,10 +6,12 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
+	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) GetNationalities(c echo.Context) error {
 	nationalities, err := h.ArtistStore.GetNationalities()
+	logrus.Debug(nationalities)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("No nationalities found"))

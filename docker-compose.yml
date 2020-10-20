@@ -1,0 +1,65 @@
+version: "3.8"
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - images:/srv/paintings
+  scraper:
+    build: 
+      context: .
+      dockerfile: cmd/scrapart/Dockerfile
+    environment:
+      WIKIART_PROTOCOL: ${WIKIART_PROTOCOL}
+      WIKIART_URL: ${WIKIART_URL}
+      PAINTINGS_DIRECTORY: ${PAINTINGS_DIRECTORY}
+      LOGS_LEVEL: ${LOGS_LEVEL}
+      TIMESTAMP_FORMAT: ${TIMESTAMP_FORMAT}
+      FULL_TIMESTAMP: ${FULL_TIMESTAMP}
+      TIME_LAYOUT_US: ${TIME_LAYOUT_US}
+      DATABASE_DRIVER: ${DATABASE_DRIVER}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_SSL: ${DATABASE_SSL}
+      DATABASE_MAX_IDLE_CONNS: ${DATABASE_MAX_IDLE_CONNS}
+      DATABASE_MAX_OPEN_CONNS: ${DATABASE_MAX_OPEN_CONNS}
+    volumes:
+      - images:/srv/paintings
+    links:
+      - db
+  api:
+    build: 
+      context: .
+      dockerfile: cmd/democrart/Dockerfile
+    restart: always
+    environment:
+      LOGS_LEVEL: ${LOGS_LEVEL}
+      TIMESTAMP_FORMAT: ${TIMESTAMP_FORMAT}
+      FULL_TIMESTAMP: ${FULL_TIMESTAMP}
+      TIME_LAYOUT_US: ${TIME_LAYOUT_US}
+      DATABASE_DRIVER: ${DATABASE_DRIVER}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_SSL: ${DATABASE_SSL}
+      DATABASE_MAX_IDLE_CONNS: ${DATABASE_MAX_IDLE_CONNS}
+      DATABASE_MAX_OPEN_CONNS: ${DATABASE_MAX_OPEN_CONNS}
+    ports:
+      - "3000:3000"
+    expose:
+      - 3000
+    volumes:
+      - images:/srv/paintings
+    links:
+      - db
+volumes:
+  images: 

@@ -10,6 +10,7 @@ func SetupLogs(logsLevel string, timestampFormat string, fullTimestamp bool) {
 	logrus.SetFormatter(&logrus.TextFormatter{
 		TimestampFormat: timestampFormat,
 		FullTimestamp:   fullTimestamp,
+		ForceColors:     true,
 	})
 	switch logsLevel {
 	case "trace":
